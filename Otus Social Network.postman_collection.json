@@ -1,0 +1,124 @@
+{
+	"info": {
+		"_postman_id": "52aeea4a-921a-4f2b-bad6-7d8411e83c5e",
+		"name": "Otus Social Network",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12010391"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"8d9b638a-0eec-4dcf-beaa-60679dc70dcd\",\r\n    \"password\": \"str\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/login",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"str\",\r\n    \"second_name\": \"str\",\r\n    \"birthdate\": \"2023-01-01\",\r\n    \"biography\": \"str\",\r\n    \"city\": \"str\",\r\n    \"password\": \"str\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/user/register",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/user/get/dfadb138-0dfc-4e8f-bdbc-45d7df4f78f9",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"user",
+						"get",
+						"dfadb138-0dfc-4e8f-bdbc-45d7df4f78f9"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTE5MzgzMjQsImlkIjoiOGQ5YjYzOGEwZWVjNGRjZmJlYWE2MDY3OWRjNzBkY2QifQ.dNOIajc42Goch7cQXvq8--73FFhs3WEdfxsUHCGtSdg",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
