@@ -1,9 +1,11 @@
 from datetime import date
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from pydantic import BaseModel
 
+from backend.dependencies.database import Connection
 from backend.dependencies.security import Authorized
+from backend.exceptions import UserNotFoundException
 
 
 class UserGetResponse(BaseModel):
@@ -15,15 +17,26 @@ class UserGetResponse(BaseModel):
     city: str
 
 
+SQL_QUERY = '''
+SELECT
+    id,
+    first_name,
+    second_name,
+    birthdate,
+    biography,
+    city
+FROM users
+WHERE id = %(id)s
+LIMIT 1;
+'''
+
+
 async def user_get(
     user_id: UUID,
+    db: Connection,
     _: Authorized,
 ) -> UserGetResponse:
-    return UserGetResponse(
-        id=uuid4(),
-        first_name='first_name',
-        second_name='second_name',
-        birthdate=date.today(),
-        biography='biography',
-        city='city',
-    )
+    cur = await db.execute(SQL_QUERY, {'id': user_id})
+    if not (row := await cur.fetchone()):
+        raise UserNotFoundException
+    return UserGetResponse(**row)

@@ -12,3 +12,7 @@ class BaseNotFoundException(HTTPException):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=self.DETAILS,
         )
+
+
+class UserNotFoundException(BaseNotFoundException):
+    DETAILS = 'USER_NOT_FOUND'
