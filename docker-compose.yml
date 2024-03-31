@@ -1,6 +1,15 @@
 version: '3'
 
 services:
+  otus-sn-backend:
+    container_name: otus-sn-backend
+    build: backend
+    ports: 
+      - 8000:8000
+    restart: always
+    environment:
+      DB_CONN: host=otus-sn-database dbname=otus-sn user=otus-sn password=otus-sn
+
   otus-sn-database:
     container_name: otus-sn-database
     image: postgres:16
@@ -12,7 +21,7 @@ services:
       POSTGRES_USER: otus-sn
       POSTGRES_PASSWORD: otus-sn
     volumes: 
-      - /opt/otus-sn/postgresql:/var/lib/postgresql/data
+      - otus-sn-database-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U otus-sn"]
       interval: 5s
@@ -22,9 +31,13 @@ services:
   otus-sn-database-pgmigrate:
     container_name: otus-sn-database-pgmigrate
     build:
+      context: database
       dockerfile: pgmigrate.Dockerfile
     depends_on:
       otus-sn-database:
         condition: service_healthy
     environment: 
-      POSTGRES_CONNECTION_STRING: host=otus-sn-database dbname=otus-sn user=otus-sn password=otus-sn
+      DB_CONN: host=otus-sn-database dbname=otus-sn user=otus-sn password=otus-sn
+
+volumes:
+  otus-sn-database-data:
