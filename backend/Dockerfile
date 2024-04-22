@@ -13,6 +13,7 @@ RUN python3 -m venv $POETRY_VENV_PATH \
     && $POETRY_VENV_PATH/bin/poetry install --only main
 
 COPY backend ./backend
+COPY scripts ./scripts
 
 EXPOSE 8000
 CMD [ "uvicorn", "backend:app", "--host=0.0.0.0", "--port=8000"]

@@ -42,7 +42,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"first_name\": \"str\",\r\n    \"second_name\": \"str\",\r\n    \"birthdate\": \"2023-01-01\",\r\n    \"biography\": \"str\",\r\n    \"city\": \"str\",\r\n    \"password\": \"str\"\r\n}",
+					"raw": "{\r\n    \"first_name\": \"test_user\",\r\n    \"second_name\": \"str\",\r\n    \"birthdate\": \"2023-01-01\",\r\n    \"biography\": \"str\",\r\n    \"city\": \"str\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -68,14 +68,45 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{BASE_URL}}/user/get/dfadb138-0dfc-4e8f-bdbc-45d7df4f78f9",
+					"raw": "{{BASE_URL}}/user/get/8d9b638a-0eec-4dcf-beaa-60679dc70dcd",
 					"host": [
 						"{{BASE_URL}}"
 					],
 					"path": [
 						"user",
 						"get",
-						"dfadb138-0dfc-4e8f-bdbc-45d7df4f78f9"
+						"8d9b638a-0eec-4dcf-beaa-60679dc70dcd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user serch",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/user/search?first_name=АлеК&last_name=Сем",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"user",
+						"search"
+					],
+					"query": [
+						{
+							"key": "first_name",
+							"value": "АлеК"
+						},
+						{
+							"key": "last_name",
+							"value": "Сем"
+						}
 					]
 				}
 			},

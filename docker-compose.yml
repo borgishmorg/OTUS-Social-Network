@@ -16,6 +16,7 @@ services:
     ports: 
       - 5432:5432
     restart: always
+    command: -c 'max_connections=200'
     environment: 
       POSTGRES_DB: otus-sn
       POSTGRES_USER: otus-sn

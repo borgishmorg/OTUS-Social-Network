@@ -4,7 +4,6 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from backend.dependencies.database import Connection
-from backend.dependencies.security import Authorized
 from backend.exceptions import UserNotFoundException
 
 
@@ -34,7 +33,6 @@ LIMIT 1;
 async def user_get(
     user_id: UUID,
     db: Connection,
-    _: Authorized,
 ) -> UserGetResponse:
     cur = await db.execute(SQL_QUERY, {'id': user_id})
     if not (row := await cur.fetchone()):
