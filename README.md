@@ -47,3 +47,85 @@ Execution Time: 1.540 ms
 ```
 
 Мною были выбраны именно BTree индексы, так как они позволяют быстро искать по префиксу строки.
+
+## ДЗ: Репликация: практическое применение
+
+1. Асинхронную репликацию настроил в docker compose следующим образом:
+
+```yaml
+version: '3'
+
+x-postgres-common: &postgres-common
+  image: postgres:16
+  restart: always
+  user: postgres
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U otus-sn"]
+    interval: 5s
+    timeout: 5s
+    retries: 5
+
+services:
+  # ... other services
+
+  otus-sn-database-primary:
+    container_name: otus-sn-database-primary
+    <<: *postgres-common
+    ports: 
+      - 5432:5432
+    command: |
+      postgres
+      -c max_connections=200
+      -c wal_level=replica 
+      -c hot_standby=on 
+      -c max_wal_senders=10 
+      -c max_replication_slots=10 
+      -c hot_standby_feedback=on
+    environment: 
+      POSTGRES_DB: otus-sn
+      POSTGRES_USER: otus-sn
+      POSTGRES_PASSWORD: otus-sn
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256\nhost replication all 0.0.0.0/0 md5"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    volumes: 
+      - otus-sn-database-primary-data:/var/lib/postgresql/data
+
+  otus-sn-database-replica:
+    container_name: otus-sn-database-replica
+    <<: *postgres-common
+    ports: 
+      - 5433:5432
+    environment:
+      PGUSER: replicator
+      PGPASSWORD: replicator_password
+    command: |
+      bash -c '
+      if [ -z "$(ls -A /var/lib/postgresql/data)" ]
+      then
+        until pg_basebackup --pgdata=/var/lib/postgresql/data -v -R --slot=replication_slot --host=otus-sn-database-primary --port=5432
+        do
+          echo "Waiting for primary to connect..."
+          sleep 1s
+        done
+        echo "Backup done, starting replica..."
+        chmod 0700 /var/lib/postgresql/data
+      fi
+      postgres -c max_connections=200
+      '
+    depends_on:
+      otus-sn-database-primary:
+        condition: service_healthy
+    volumes: 
+      - otus-sn-database-replica-data:/var/lib/postgresql/data
+
+
+volumes:
+  otus-sn-database-primary-data:
+  otus-sn-database-replica-data:
+```
+
+2. Перенес запросы /user/get и /user/search на чтение из реплики.
+3. Произвел нагрузочное тестирование этих запросов при помощи JMeter ([скрипт](jmeter/hw3_read_only.jmx)).
+   - Метрики мастера во время теста: ![alt text](images/hw3/primary_metrics.png)
+   - Метрики реплики во время теста: ![alt text](images/hw3/replica_metrics.png)
+   Видно, что всю нагрузку приняла на себя реплика.

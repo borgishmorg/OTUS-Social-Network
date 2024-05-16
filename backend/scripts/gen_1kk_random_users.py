@@ -5,7 +5,7 @@ import tqdm
 from mimesis import Address, Person, Text
 from mimesis.locales import Locale
 
-from backend.dependencies.database import connection
+from backend.dependencies.database import connection, pools_lifespan
 
 BATCH_COUNT = 100
 BATCH_SIZE = 10_000
@@ -39,6 +39,7 @@ INSERT INTO users(
 
 async def main():
     async with (
+        pools_lifespan(),
         asynccontextmanager(connection)() as conn,
         conn.cursor() as cur
     ):

@@ -1,4 +1,4 @@
-from backend.dependencies.database import Connection
+from backend.dependencies.database import ReplicaConnection
 from backend.handlers.user_get import UserGetResponse
 
 SQL_QUERY = '''
@@ -20,7 +20,7 @@ limit 25;
 async def user_search(
     first_name: str,
     last_name: str,
-    db: Connection,
+    db: ReplicaConnection,
 ) -> list[UserGetResponse]:
     cur = await db.execute(SQL_QUERY, {'first_name': first_name.lower(), 'last_name': last_name.lower()})
     return [
