@@ -34,6 +34,9 @@ services:
       -c max_wal_senders=10 
       -c max_replication_slots=10 
       -c hot_standby_feedback=on
+    # remove comment after first `docker compose up`
+    #   -c synchronous_commit=on
+    #   -c synchronous_standby_names='ANY 1 (pgslave, anotherpgslave)'
     environment: 
       POSTGRES_DB: otus-sn
       POSTGRES_USER: otus-sn
@@ -63,13 +66,43 @@ services:
         echo "Backup done, starting replica..."
         chmod 0700 /var/lib/postgresql/data
       fi
-      postgres -c max_connections=200
+      postgres -c max_connections=200\
+        -c primary_conninfo="host=otus-sn-database-primary port=5432 user=replicator password=replicator_password application_name=pgslave"
       '
     depends_on:
       otus-sn-database-primary:
         condition: service_healthy
     volumes: 
       - otus-sn-database-replica-data:/var/lib/postgresql/data
+
+  otus-sn-database-another-replica:
+    container_name: otus-sn-database-another-replica
+    <<: *postgres-common
+    ports: 
+      - 5434:5432
+    environment:
+      PGUSER: replicator
+      PGPASSWORD: replicator_password
+    command: |
+      bash -c '
+      if [ -z "$(ls -A /var/lib/postgresql/data)" ]
+      then
+        until pg_basebackup --pgdata=/var/lib/postgresql/data -v -R --slot=another_replication_slot --host=otus-sn-database-primary --port=5432
+        do
+          echo "Waiting for primary to connect..."
+          sleep 1s
+        done
+        echo "Backup done, starting replica..."
+        chmod 0700 /var/lib/postgresql/data
+      fi
+      postgres -c max_connections=200\
+        -c primary_conninfo="host=otus-sn-database-primary port=5432 user=replicator password=replicator_password application_name=anotherpgslave"
+      '
+    depends_on:
+      otus-sn-database-primary:
+        condition: service_healthy
+    volumes: 
+      - otus-sn-database-another-replica-data:/var/lib/postgresql/data
 
   otus-sn-database-pgmigrate:
     container_name: otus-sn-database-pgmigrate
@@ -85,3 +118,4 @@ services:
 volumes:
   otus-sn-database-primary-data:
   otus-sn-database-replica-data:
+  otus-sn-database-another-replica-data:

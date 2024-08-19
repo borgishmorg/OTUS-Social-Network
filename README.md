@@ -129,3 +129,67 @@ volumes:
    - Метрики мастера во время теста: ![alt text](images/hw3/primary_metrics.png)
    - Метрики реплики во время теста: ![alt text](images/hw3/replica_metrics.png)
    Видно, что всю нагрузку приняла на себя реплика.
+
+4. Добавил еще одну реплику:
+
+```yaml
+# ... other services
+  otus-sn-database-another-replica:
+    container_name: otus-sn-database-another-replica
+    <<: *postgres-common
+    ports: 
+      - 5434:5432
+    environment:
+      PGUSER: replicator
+      PGPASSWORD: replicator_password
+    command: |
+      bash -c '
+      if [ -z "$(ls -A /var/lib/postgresql/data)" ]
+      then
+        until pg_basebackup --pgdata=/var/lib/postgresql/data -v -R --slot=another_replication_slot --host=otus-sn-database-primary --port=5432
+        do
+          echo "Waiting for primary to connect..."
+          sleep 1s
+        done
+        echo "Backup done, starting replica..."
+        chmod 0700 /var/lib/postgresql/data
+      fi
+      postgres -c max_connections=200\
+        -c primary_conninfo="host=otus-sn-database-primary port=5432 user=replicator password=replicator_password application_name=anotherpgslave"
+      '
+    depends_on:
+      otus-sn-database-primary:
+        condition: service_healthy
+    volumes: 
+      - otus-sn-database-another-replica-data:/var/lib/postgresql/data
+```
+
+5. Настроил синхронную репликацию на мастере:
+
+```sql
+--  -c synchronous_commit=on
+--  -c synchronous_standby_names='ANY 1 (pgslave, anotherpgslave)'
+
+select application_name, state, sync_state from pg_stat_replication;
+
+|application_name|state    |sync_state|
+|----------------|---------|----------|
+|pgslave         |streaming|quorum    |
+|anotherpgslave  |streaming|quorum    |
+```
+
+6. Создал постоянную нагрузку на запись при помощи [скрипта](backend/scripts/gen_random_user_in_loop.py) и стопнул реплику.
+
+7. Имеем следующую картину на мастере и оставшейся реплике:
+
+```sql
+-- otus-sn-database-primary
+select count(*) from users;
+ 2924
+
+-- otus-sn-database-another-replica
+select count(*) from users;
+ 2924
+
+-- Ни одна транзакция не "потерялась"
+```

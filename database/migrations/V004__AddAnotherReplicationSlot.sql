@@ -1,0 +1,1 @@
+SELECT pg_create_physical_replication_slot('another_replication_slot');
