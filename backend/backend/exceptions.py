@@ -16,3 +16,7 @@ class BaseNotFoundException(HTTPException):
 
 class UserNotFoundException(BaseNotFoundException):
     DETAILS = 'USER_NOT_FOUND'
+
+
+class PostNotFoundException(BaseNotFoundException):
+    DETAILS = 'POST_NOT_FOUND'

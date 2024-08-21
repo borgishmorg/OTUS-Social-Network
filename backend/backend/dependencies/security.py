@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 import jwt
 from fastapi import Depends, HTTPException, status
@@ -11,11 +12,12 @@ bearer_scheme = HTTPBearer()
 
 async def authorized(creds: Annotated[HTTPAuthorizationCredentials, Depends(bearer_scheme)]) -> None:
     try:
-        jwt.decode(
+        payload: dict = jwt.decode(
             jwt=creds.credentials,
             key=settings.JWT_SECRET,
             algorithms=['HS256'],
         )
+        return UUID(payload['id'])
     except (
         jwt.ExpiredSignatureError,
         jwt.InvalidSignatureError,
@@ -26,4 +28,4 @@ async def authorized(creds: Annotated[HTTPAuthorizationCredentials, Depends(bear
         )
 
 
-Authorized = Annotated[None, Depends(authorized)]
+Authorized = Annotated[UUID, Depends(authorized)]

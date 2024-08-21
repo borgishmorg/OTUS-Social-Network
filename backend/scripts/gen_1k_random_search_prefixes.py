@@ -6,6 +6,7 @@ from mimesis.locales import Locale
 COUNT = 1000
 PERSON = Person(Locale.RU)
 
+
 def main():
     for _ in range(COUNT):
         first_name = PERSON.first_name().lower()

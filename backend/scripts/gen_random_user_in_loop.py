@@ -1,7 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
 
-import tqdm
 from mimesis import Address, Person, Text
 from mimesis.locales import Locale
 
@@ -35,6 +34,7 @@ INSERT INTO users(
 '''
 
 successes, failures = 0, 0
+
 
 async def main():
     global successes, failures

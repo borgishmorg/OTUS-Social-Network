@@ -55,7 +55,7 @@ async def main():
                         'city': ADDRESS.city(),
                         'password_hash': bytes.fromhex(PASSWORD_HASH_HEX),
                     }
-                    for _ in  range(BATCH_SIZE)
+                    for _ in range(BATCH_SIZE)
                 ]
             )
 
