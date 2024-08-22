@@ -7,13 +7,31 @@
 	},
 	"item": [
 		{
+			"name": "debug cache",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/debug/cache",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"debug",
+						"cache"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "login",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"8d9b638a-0eec-4dcf-beaa-60679dc70dcd\",\r\n    \"password\": \"str\"\r\n}",
+					"raw": "{\r\n    \"id\": \"7ac59b38-7466-4c57-ae7d-806e66f36fb9\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -106,6 +124,193 @@
 						{
 							"key": "last_name",
 							"value": "Сем"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "friend set",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQzNjA2NTQsImlkIjoiN2FjNTliMzg3NDY2NGM1N2FlN2Q4MDZlNjZmMzZmYjkifQ.MP7E7RCJRjbcJRB2V3I2EE3zeOJqa5lSOyqarC2lgy8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/friend/set/94aa2987-deb8-4cd8-929b-7d8f658b47ba",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"friend",
+						"set",
+						"94aa2987-deb8-4cd8-929b-7d8f658b47ba"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "friend delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQzNjA2NTQsImlkIjoiN2FjNTliMzg3NDY2NGM1N2FlN2Q4MDZlNjZmMzZmYjkifQ.MP7E7RCJRjbcJRB2V3I2EE3zeOJqa5lSOyqarC2lgy8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/friend/delete/94aa2987-deb8-4cd8-929b-7d8f658b47ba",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"friend",
+						"delete",
+						"94aa2987-deb8-4cd8-929b-7d8f658b47ba"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQzNjA2NTQsImlkIjoiN2FjNTliMzg3NDY2NGM1N2FlN2Q4MDZlNjZmMzZmYjkifQ.MP7E7RCJRjbcJRB2V3I2EE3zeOJqa5lSOyqarC2lgy8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"some post text\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/post/create",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"post",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post get",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/post/get/c812bdc8-7d68-4a52-9ec4-23f7756a0b33",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"post",
+						"get",
+						"c812bdc8-7d68-4a52-9ec4-23f7756a0b33"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post feed",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQzNjA2NTQsImlkIjoiN2FjNTliMzg3NDY2NGM1N2FlN2Q4MDZlNjZmMzZmYjkifQ.MP7E7RCJRjbcJRB2V3I2EE3zeOJqa5lSOyqarC2lgy8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/post/feed?limit=3&offset=6",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"post",
+						"feed"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "30"
+						},
+						{
+							"key": "offset",
+							"value": "0"
 						}
 					]
 				}

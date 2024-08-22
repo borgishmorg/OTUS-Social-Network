@@ -2,7 +2,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from backend.dependencies.database import pools_lifespan
+from backend.dependencies.cache import _cache
+from backend.dependencies.database import pools_lifespan, replica_connection
+from backend.handlers.debug_cache import debug_cache
 from backend.handlers.friend_delete import friend_delete
 from backend.handlers.friend_set import friend_set
 from backend.handlers.login import login
@@ -12,16 +14,25 @@ from backend.handlers.post_get import post_get
 from backend.handlers.user_get import user_get
 from backend.handlers.user_register import user_register
 from backend.handlers.user_search import user_search
+from backend.services.feed import PostFeedsService
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with pools_lifespan():
+        async with asynccontextmanager(replica_connection)() as db:
+            post_feeds_service = PostFeedsService(
+                db=db,
+                cache=_cache,
+            )
+            await post_feeds_service.invalidate_all_feeds()
+
         yield
 
 
 app = FastAPI(lifespan=lifespan)
 
+app.add_api_route('/debug/cache', debug_cache, methods=['GET'])
 app.add_api_route('/login', login, methods=['POST'])
 app.add_api_route('/user/register', user_register, methods=['POST'])
 app.add_api_route('/user/get/{user_id}', user_get, methods=['GET'])
