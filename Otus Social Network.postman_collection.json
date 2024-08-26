@@ -210,7 +210,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQzNjA2NTQsImlkIjoiN2FjNTliMzg3NDY2NGM1N2FlN2Q4MDZlNjZmMzZmYjkifQ.MP7E7RCJRjbcJRB2V3I2EE3zeOJqa5lSOyqarC2lgy8",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQ2OTU4ODIsImlkIjoiN2FjNTliMzg3NDY2NGM1N2FlN2Q4MDZlNjZmMzZmYjkifQ.wRmMHSXcxxlrnCfYfFHxc2HQNsbAaiPufZ01LDIxfts",
 							"type": "string"
 						}
 					]
@@ -226,7 +226,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"text\": \"some post text\"\r\n}",
+					"raw": "{\r\n    \"text\": \"some post text123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -295,7 +295,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{BASE_URL}}/post/feed?limit=3&offset=6",
+					"raw": "{{BASE_URL}}/post/feed?limit=30&offset=0",
 					"host": [
 						"{{BASE_URL}}"
 					],

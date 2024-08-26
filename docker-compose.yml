@@ -20,6 +20,7 @@ services:
     environment:
       DB_CONN_PRIMARY: host=otus-sn-database-primary dbname=otus-sn user=otus-sn password=otus-sn
       DB_CONN_REPLICA: host=otus-sn-database-replica dbname=otus-sn user=otus-sn password=otus-sn
+      RABBITMQ_CONN: amqp://guest:guest@otus-sn-rabbitmq/
 
   otus-sn-database-primary:
     container_name: otus-sn-database-primary
@@ -115,7 +116,18 @@ services:
     environment: 
       DB_CONN: host=otus-sn-database-primary dbname=otus-sn user=otus-sn password=otus-sn
 
+  otus-sn-rabbitmq:
+    image: rabbitmq:3.10.7-management
+    hostname: rabbitmq
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - otus-sn-rabbitmq-data:/var/lib/rabbitmq
+
 volumes:
   otus-sn-database-primary-data:
   otus-sn-database-replica-data:
   otus-sn-database-another-replica-data:
+  otus-sn-rabbitmq-data:

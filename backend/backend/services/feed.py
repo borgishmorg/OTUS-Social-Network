@@ -39,22 +39,12 @@ class PostFeedsService:
     ) -> list[PostFeedItem]:
         return self._cache.get(user_id, [])[offset:offset + limit]
 
-    async def add_post_to_feeds(
+    async def add_post_to_feed(
         self,
         user_id: UUID,
-        post_id: UUID,
-        text: str
+        feed_item: PostFeedItem,
     ) -> None:
-        subscribers_ids = await self._get_subscribers_ids(user_id=user_id)
-
-        for subscriber_id in subscribers_ids:
-            self._cache[subscriber_id] = [
-                PostFeedItem(
-                    id=post_id,
-                    text=text,
-                    author_user_id=user_id,
-                )
-            ] + self._cache.get(subscriber_id, [])[:self.MAX_CACHED_POSTS_IN_FEED - 1]
+        self._cache[user_id] = [feed_item] + self._cache.get(user_id, [])[:self.MAX_CACHED_POSTS_IN_FEED - 1]
 
     async def invalidate_single_feed(self, user_id: UUID) -> None:
         cur = await self._db.execute(

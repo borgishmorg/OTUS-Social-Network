@@ -194,12 +194,12 @@ select count(*) from users;
 -- Ни одна транзакция не "потерялась"
 ```
 
-## ДЗ: Кеширование
+## ДЗ: Лента постов от друзей
 
 Мною были реализованы следующие новые эндпоинты:
  - [/friend/set](backend/backend/handlers/friend_set.py) - добавляет пользователю нового друга и инвалидирует его ленту постов
  - [/friend/delete](backend/backend/handlers/friend_delete.py) - удаляет у пользователя друга и инвалидирует его ленту постов
- - [/post/create](backend/backend/handlers/post_create.py) - добавляет новый пост в БД и в закэшированные ленты всех пользователей, которые добавили автора в друзья
+ - [/post/create](backend/backend/handlers/post_create.py) - добавляет новый пост в БД и очередь постов
  - [/post/get](backend/backend/handlers/post_get.py) - возвращает пост по его id
  - [/post/feed](backend/backend/handlers/post_feed.py) - возвращает закэшированную ленту для пользователя
  - [/debug/cache](backend/backend/handlers/debug_cache.py) - возвращает внутреннее состояние кэша
@@ -208,4 +208,24 @@ select count(*) from users;
 
 В качестве кэша использовался обычный питоновский словарь. Кажется, что этого достаточно для учебных целей. В дальнейшем его можно будет легко заменить например на Redis. 
 
-Механика с обновление через очередь будет реализована в следующем ДЗ.
+
+## ДЗ: Онлайн обновление ленты новостей
+
+Мною были изменен эндпоинт [/post/create](backend/backend/handlers/post_create.py). Теперь в нем, помимо сохранения поста в БД, происходит его отправка в очередь постов для дальнейшей обработки.
+
+Также был добавлен вэбсокет-эндпоинт [/post/feed/posted](backend/backend/handlers/post_feed_posted.py). В нем в реальном времени вычитываются посты друзей пользователя из подходящей очереди.
+
+Для корректной маршрутизации сообщений между очередями была реализована фоновая таска [feeds_update_background_task](backend/backend/background/feeds.py). Она берет пост из очереди постов, определяет всех пользователей, которые добавили автора поста в друзья, обновляет их ленты постов и пересылает посты в их персональные очереди.
+
+Схема передачи сообщений выглядит следующим образом:
+
+```mermaid
+flowchart LR
+  pce([post/create]) --> pq[[posts]]
+  pq --> fut([feeds update task])
+  fut --> fe{feeds}
+  fe --> fu1q[[user/user_1]]
+  fe --> fu2q[[user/user_2]]
+  fu1q --> pfp1([post/feed/posted])
+  fu2q --> pfp2([post/feed/posted])
+```
